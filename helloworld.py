@@ -1,152 +1,48 @@
-# marine1 = Unit("마린", 40, 5)
-# marine2 = Unit("마린", 40, 5)
-# tank = Unit("탱크", 150, 35)
+import numpy as np
 
-# wraith2 = Unit("레이스", 80, 5)
-# wraith2.clocking = True
+def readtxt_returnlst(txtPath):
+    ftream = open(txtPath, encoding="utf-8")
+    rltList = ftream.readlines()
+    ftream.close()
+    return rltList
 
-# wraith1 = Unit("빼앗은 레이스", 80, 5)
-# print("유닛 이름 : {0}, 공격력 : {1}" .format(wraith1.name, wraith1.damage))
+dataFilePath    = "lab02_poketmon/poketmon_data.txt"
+indexFilePath   = "lab02_poketmon/poketmon_index.txt"
 
-# if wraith2.clocking == True:
-#     print("{0} 는 현재 클로킹 상태입니다." .format(wraith2.name))
+# index 파일을 읽어서 포켓몬 이름이 들어가 있는 리스트만들기
+poketmon_name_list = list()
 
-from random import *
+# fStream = open(indexFilePath,encoding="utf-8")
+# temp_list = fStream.readlines()
+# fStream.close()
 
-class Unit:
-    def __init__(self, name, hp, speed):
-        self.name = name
-        self.hp = hp
-        self.speed = speed
-        print("{0} 유닛이 생성되었습니다." .format(name))
-    
-    def move(self, location):
-        print("[지상 유닛 이동]")
-        print("{0} : {1} 방향으로 이동합니다. [속도 {2}]" \
-            .format(self.name, location, self.speed))
+temp_list = readtxt_returnlst(indexFilePath)
+for i in temp_list :
+    poketmon_name_list.append( i.strip() )
+# 포켓몬 이름이 있는 리스트와 동일한 길이의 리스트를 만들고 0으로 초기화해두기
+# poketmon_count_list = list()
+# for i in poketmon_name_list :
+#     poketmon_count_list.append(0)
 
-    def damaged(self, damage):
-        print("{0} : {1} 데미지를 입었습니다." .format(self.name, damage))
-        self.hp -= damage
-        print("{0} : 현재 체력은 {1} 입니다." . format(self.name, self.hp))
-        if self.hp <= 0:
-            print("{0} : 파괴되었습니다." .format(self.name))
-
-class AttackUnit(Unit):
-    def __init__(self, name, hp, speed, damage):
-        Unit.__init__(self, name, hp, speed)
-        self.damage = damage
-    
-    def attack(self, location):
-        print("{0} : {1} 방향으로 적군을 공격 합니다. [공격력 {2}]" \
-            .format(self.name, location, self.damage))
-
-class Marine(AttackUnit):
-    def __init__(self):
-        AttackUnit.__init__(self, "마린", 40, 1, 5)
-
-    def stimpack(self):
-        if self.hp > 10:
-            self.hp -= 10
-            print("{0} : 스팀팩을 사용합니다. (HP 10 감소)" .format(self.name))
-        else:
-            print("{0} : 체력이 부족하여 스팀팩을 사용하지 않습니다." .format(self.name))
-
-class Tank(AttackUnit):
-    seize_developed = False
-
-    def __init__(self):
-        AttackUnit.__init__(self, "탱크", 150, 1, 35)
-        self.seize_mode = False
-
-    def set_seize_mode(self):
-        if Tank.seize_developed == False:
-            return
-
-        if self.seize_mode == False:
-            print("{0} : 시즈모드로 전환합니다." .format(self.name))
-            self.damage *= 2
-            self.seize_mode = True
-        else:
-            print("{0} : 시즈모드를 해제합니다." .format(self.name))
-            self.damage /= 2
-            self.seize_mode = False
-
-class Flyable:
-    def __init__(self, flying_speed):
-        self.flying_speed = flying_speed
-
-    def fly(self, name, location):
-        print("{0} : {1} 방향으로 날아갑니다. [속도 {2}]" \
-            .format(name, location, self.flying_speed))
-
-class FlyableAttackUnit(AttackUnit, Flyable):
-    def __init__(self, name, hp, damage, flying_speed):
-        AttackUnit.__init__(self, name, hp, 0, damage) # 지상 speed 0
-        Flyable.__init__(self, flying_speed)
-
-    def move(self, location):
-        print("[공중 유닛 이동]")
-        self.fly(self.name, location)
-
-class Wraith(FlyableAttackUnit):
-    def __init__(self):
-        FlyableAttackUnit.__init__(self, "레이스", 80, 20, 5)
-        self.clocked = False
-
-    def clocking(self):
-        if self.clocked == True:
-            print("{0} : 클로킹 모드 해제합니다." .format(self.name))
-            self.clocked = False
-        else: 
-            print("{0} : 클로킹 모드 설정합니다." .format(self.name))
-            self.clocked = True
+poketmon_count_list = np.zeros([len(poketmon_name_list)], dtype=int)
+print(len(poketmon_name_list))
+print(len(poketmon_count_list))
 
 
-def game_start():
-    print("[알림] 새로운 게임을 시작합니다.")
+# Data 파일을 읽어서 반복문을 돌면서 해당 포켓몬이 들어있는 index 값 찾기
+all_poketmonData_list = readtxt_returnlst(dataFilePath)
+for each in all_poketmonData_list :
+    each_poketmon = each.strip()
+    target_index = poketmon_name_list.index( each_poketmon )
 
-def game_over():
-    print("Player : gg")
-    print("[Player] 님이 게임에서 퇴장하셨습니다.")
+    # 0으로 초기화 해두었던 list에 위에서 찾았던 index번호에 +1 해주기
+    poketmon_count_list[target_index] += 1
 
-game_start()
 
-m1 = Marine()
-m2 = Marine()
-m3 = Marine()
+print(poketmon_name_list)
+print(poketmon_count_list)
 
-t1 = Tank()
-t2 = Tank()
 
-w1 = Wraith()
-
-attack_units = []
-attack_units.append(m1)
-attack_units.append(m2)
-attack_units.append(m3)
-attack_units.append(t1)
-attack_units.append(t2)
-attack_units.append(w1)
-
-for unit in attack_units:
-    unit.move("1시")
-
-Tank.seize_developed = True
-print("[알림] 탱크 시즈 모드 개발이 완료되었습니디.")
-
-for unit in attack_units:
-    if isinstance(unit, Marine):
-        unit.stimpack()
-    elif isinstance(unit, Tank):
-        unit.set_seize_mode()
-    elif isinstance(unit, Wraith):
-        unit.clocking()
-
-for unit in attack_units:
-    unit.attack("1시")
-
-for unit in attack_units:
-    unit.damaged(randint(5, 20))
-
-game_over()
+# 이쁘게 출력하기
+for i in range( len(poketmon_name_list) ) :
+    print(poketmon_name_list[i], ":", poketmon_count_list[i])
