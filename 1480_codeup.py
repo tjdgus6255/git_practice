@@ -1,5 +1,4 @@
-# n, m = map(int, input().split())
-n, m = 3, 4
+n, m = map(int, input().split())
 arr = [[0]*m for _ in range(n)]
 cnt = 0
 
@@ -14,3 +13,5 @@ for i in range(0, n):
     for j in range(0, m):
         print(arr[i][j], end=' ')
     print()       
+
+# 1476 코드 응용
